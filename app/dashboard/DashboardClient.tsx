@@ -87,9 +87,12 @@ export default function DashboardClient({
           <span className="font-display text-lg font-semibold">Resume Builder</span>
           <div className="flex items-center gap-4">
             <span className="text-sm text-ink-500">Hi, {userName}</span>
-            <button onClick={() => signOut({ callbackUrl: "/" })} className="text-sm text-ink-500 hover:text-ink-900">
-              Log out
-            </button>
+            <button
+  onClick={() => signOut({ callbackUrl: window.location.origin })}
+  className="text-sm text-ink-500 hover:text-ink-900"
+>
+  Log out
+</button>
           </div>
         </div>
       </header>
