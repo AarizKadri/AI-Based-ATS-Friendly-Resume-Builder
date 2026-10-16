@@ -49,30 +49,6 @@ Open http://localhost:3000. Register an account, or log in as the seeded
 admin at `/admin` (change that password immediately — it's a placeholder for
 local dev only).
 
-## Choosing an AI provider
-
-Every AI feature routes through `lib/ai.ts`. Set `AI_PROVIDER` in `.env` to
-one of:
-
-- **`gemini`** (default) — **genuinely free, no credit card.** Get a key at
-  https://aistudio.google.com/apikey, put it in `GEMINI_API_KEY`. Free-tier
-  rate limits are modest (roughly 10-15 requests/minute on Flash models as of
-  this writing) — fine for building/demoing, worth knowing if you hit 429s.
-  Google's free-tier terms let them use your inputs/outputs to improve their
-  models, worth knowing if you're testing with real resume data.
-- **`groq`** — also free-tier, runs open models (Llama, etc.) very fast. Get
-  a key at https://console.groq.com/keys, put it in `GROQ_API_KEY`.
-- **`anthropic`** — Claude, if you have a paid Anthropic API key. Put it in
-  `ANTHROPIC_API_KEY`.
-
-Rate limits and free-tier terms change — check the provider's docs
-(`https://ai.google.dev/gemini-api/docs` for Gemini, `https://console.groq.com/docs`
-for Groq) if something that used to work starts 429ing.
-
-Whichever provider you pick, every AI feature (summary generation, rewriting,
-ATS scoring, job matching, career recs, cover letters, chat, resume import)
-will fail with a clear error message until its API key is set — nothing
-silently falls back to canned text.
 
 ## Project layout
 
