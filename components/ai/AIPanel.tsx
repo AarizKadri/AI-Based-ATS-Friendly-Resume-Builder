@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import toast from "react-hot-toast";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type Tab = "match" | "analysis" | "career" | "cover" | "chat";
 
@@ -284,10 +286,38 @@ function ChatTab({ resumeText }: { resumeText: string }) {
           </p>
         )}
         {messages.map((m, i) => (
-          <div key={i} className={`p-2 rounded ${m.role === "user" ? "bg-ink-50 ml-6" : "bg-signal-50 mr-6"}`}>
-            {m.content}
-          </div>
-        ))}
+  <div
+    key={i}
+    className={`p-2 rounded ${
+      m.role === "user"
+        ? "bg-ink-50 ml-6"
+        : "bg-signal-50 mr-6"
+    }`}
+  >
+    {m.role === "assistant" ? (
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+          ul: ({ children }) => (
+            <ul className="list-disc ml-5 mb-2">{children}</ul>
+          ),
+          ol: ({ children }) => (
+            <ol className="list-decimal ml-5 mb-2">{children}</ol>
+          ),
+          li: ({ children }) => <li className="mb-1">{children}</li>,
+          strong: ({ children }) => (
+            <strong className="font-semibold">{children}</strong>
+          ),
+        }}
+      >
+        {m.content}
+      </ReactMarkdown>
+    ) : (
+      m.content
+    )}
+  </div>
+))}
       </div>
       <div className="flex gap-2">
         <input
