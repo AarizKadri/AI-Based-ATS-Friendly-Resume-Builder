@@ -45,9 +45,7 @@ npm run db:seed           # creates the 4 templates + a demo admin (admin@exampl
 npm run dev
 ```
 
-Open http://localhost:3000. Register an account, or log in as the seeded
-admin at `/admin` (change that password immediately — it's a placeholder for
-local dev only).
+Open http://localhost:3000. Register an account, or log in 
 
 
 ## Project layout
