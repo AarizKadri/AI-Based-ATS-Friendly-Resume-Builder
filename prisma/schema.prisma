@@ -1,0 +1,146 @@
+// Prisma schema for AI Resume Builder
+// SQLite for local dev — swap provider to "postgresql" for production.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id             String    @id @default(cuid())
+  name           String
+  email          String    @unique
+  passwordHash   String
+  role           String      @default("USER")
+  profilePhoto   String?
+  targetJobTitle String?
+  targetIndustry String?
+  yearsExperience Int?
+  preferredLocations String? // comma-separated
+  workPreference String?    // remote | hybrid | onsite
+  portfolioUrl   String?
+  linkedinUrl    String?
+  githubUrl      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  resumes        Resume[]
+  coverLetters   CoverLetter[]
+  feedback       Feedback[]
+}
+
+model Resume {
+  id            String   @id @default(cuid())
+  ownerId       String
+  owner         User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  title         String
+  templateId    String   @default("classic")
+  accentColor   String   @default("#0E7C7B")
+  fontFamily    String   @default("Inter")
+  fontSizePt    Int      @default(11)
+  // Flexible section data. Each resume is a ordered list of sections;
+  // each section has a type (from ResumeSectionType) + arbitrary JSON content.
+  // Keeping this as JSON (rather than one table per section type) is what lets
+  // "custom sections" and future section types ship without a migration.
+  sectionsJson  String   @default("[]")
+  isTailored    Boolean  @default(false)
+  parentResumeId String? // set when this is a job-tailored copy of another resume
+  jobDescriptionId String?
+  jobDescription  JobDescription? @relation(fields: [jobDescriptionId], references: [id])
+  shareSlug     String?  @unique
+  isPublic      Boolean  @default(false)
+  lastOpenedAt  DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  versions      ResumeVersion[]
+  analyses      ResumeAnalysis[]
+  jobMatches    JobMatch[]
+}
+
+model ResumeVersion {
+  id           String   @id @default(cuid())
+  resumeId     String
+  resume       Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  label        String
+  sectionsJson String
+  templateId   String
+  createdAt    DateTime @default(now())
+}
+
+model JobDescription {
+  id          String   @id @default(cuid())
+  ownerId     String
+  title       String
+  company     String?
+  rawText     String
+  extractedJson String @default("{}") // { requiredSkills, preferredSkills, keywords }
+  createdAt   DateTime @default(now())
+
+  resumes     Resume[]
+  matches     JobMatch[]
+}
+
+model JobMatch {
+  id               String   @id @default(cuid())
+  resumeId         String
+  resume           Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  jobDescriptionId String
+  jobDescription   JobDescription @relation(fields: [jobDescriptionId], references: [id], onDelete: Cascade)
+  matchScore       Int
+  matchedKeywords  String   // JSON array
+  missingKeywords  String   // JSON array
+  recommendations  String   // JSON array
+  createdAt        DateTime @default(now())
+}
+
+model ResumeAnalysis {
+  id             String   @id @default(cuid())
+  resumeId       String
+  resume         Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  overallScore   Int
+  atsScore       Int
+  sectionScores  String   // JSON: { [sectionId]: score }
+  strengths      String   // JSON array
+  weaknesses     String   // JSON array
+  recommendations String  // JSON array, prioritized
+  createdAt      DateTime @default(now())
+}
+
+model CoverLetter {
+  id           String   @id @default(cuid())
+  ownerId      String
+  owner        User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  resumeId     String?
+  title        String
+  company      String?
+  tone         String   @default("professional")
+  bodyMarkdown String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Template {
+  id          String   @id @default(cuid())
+  key         String   @unique // matches component key in components/templates
+  name        String
+  description String
+  audience    String   // "ats" | "student" | "experienced" | "general"
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  type      String   // "bug" | "feedback" | "feature_request"
+  message   String
+  status    String   @default("open") // open | reviewed | resolved
+  createdAt DateTime @default(now())
+}
