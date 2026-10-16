@@ -99,46 +99,4 @@ prisma/      — schema.prisma, seed.ts
 types/       — resume.ts (section types), next-auth.d.ts
 ```
 
-## What's genuinely finished vs. what's scaffolded
 
-The source spec had 200+ line items across 21 sections. Building every one of
-those to full production polish isn't realistic in one pass, and I'd rather
-tell you clearly what you're getting than claim total coverage:
-
-**Fully working:**
-Auth, dashboard (search/rename/duplicate/delete), structured builder with all
-19 section types + custom sections, add/reorder/toggle/delete sections,
-autosave + manual save, 4 templates with live preview matching PDF/DOCX/HTML
-export, resume import (PDF/DOCX → AI-mapped sections, editable before save),
-AI summary/headline generation, AI rewrite (professional/concise/grammar/
-action-bullets), ATS scoring, full resume analysis & scoring (persisted,
-re-runnable), job-description matching with match score + keyword gaps +
-recommendations, career & skill recommendations, cover letter generation
-(tone/company/JD-aware, editable, persisted), resume-aware chat assistant,
-version snapshots + restore, duplicate/tailor-for-a-job, public share links,
-basic admin panel (stats, user roles, feedback triage).
-
-**Scaffolded but intentionally minimal — the architecture supports these,
-but the UI/logic is basic and worth extending before shipping:**
-- **Templates are one layout with 4 skins**, not 4 structurally different
-  designs (e.g. no true two-column "Modern" layout yet). Add a new component
-  in `components/templates/` and register it in `lib/templates.ts`.
-- **Admin template management** (add/edit/delete templates from the UI) —
-  the `Template` table and API pattern exist; there's no admin CRUD screen
-  for it yet.
-- **Undo/redo** in the builder isn't implemented — sections are simple React
-  state, so this is a `useState` history stack away.
-- **Drag-and-drop reordering** uses up/down buttons instead of a DnD library
-  — functionally equivalent, less slick.
-- **ATS "problematic formatting" detection** is AI-judged from text content,
-  not a rules-based parser checking for tables/images/columns in the actual
-  file.
-
-## A note on "make no mistakes"
-
-I ran `tsc --noEmit` and a full `next build` against this codebase and fixed
-every error that surfaced (type mismatches in the PDF/DOCX export routes,
-implicit `any`s). The build compiles cleanly. I can't guarantee zero bugs in
-code this size that's never been run against a real Postgres instance or a
-live Anthropic key — treat this as a solid, working starting point to run
-`npm run dev` against and iterate on, not a black box.
