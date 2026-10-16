@@ -278,8 +278,8 @@ function ChatTab({ resumeText }: { resumeText: string }) {
   }
 
   return (
-    <div className="flex flex-col h-full text-sm">
-      <div className="flex-1 space-y-2 mb-2 min-h-[200px]">
+    <div className="flex flex-col h-full min-h-0 text-sm">
+      <div className="flex-1 min-h-0 overflow-y-auto space-y-2 mb-3">
         {messages.length === 0 && (
           <p className="text-ink-500 text-xs">
             Ask anything about this resume — &ldquo;improve my summary&rdquo;, &ldquo;how&apos;s my ATS compatibility&rdquo;, &ldquo;what skills should I add for a PM role&rdquo;…
@@ -288,11 +288,11 @@ function ChatTab({ resumeText }: { resumeText: string }) {
         {messages.map((m, i) => (
   <div
     key={i}
-    className={`p-2 rounded ${
-      m.role === "user"
-        ? "bg-ink-50 ml-6"
-        : "bg-signal-50 mr-6"
-    }`}
+   className={`w-fit max-w-[90%] break-words px-2.5 py-1.5 rounded-lg ${
+  m.role === "user"
+    ? "ml-auto bg-ink-50"
+    : "mr-auto bg-signal-50"
+}`}
   >
     {m.role === "assistant" ? (
       <ReactMarkdown
@@ -319,7 +319,7 @@ function ChatTab({ resumeText }: { resumeText: string }) {
   </div>
 ))}
       </div>
-      <div className="flex gap-2">
+      <div className="flex shrink-0 gap-2 border-t border-ink-100 bg-white pt-2">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
