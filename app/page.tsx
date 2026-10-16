@@ -115,7 +115,7 @@ export default async function Home() {
             </h2>
             <p className="mt-3 text-ink-500">
               No more juggling a Word doc, a separate ATS checker, and a blank cover-letter
-              template. It's all in the builder.
+              template. It&pos;s all in the builder.
             </p>
           </div>
 
@@ -177,7 +177,7 @@ export default async function Home() {
             href="/register"
             className="px-6 py-3 bg-signal text-white rounded font-medium hover:bg-signal-700 transition-colors"
           >
-            Build my resume — it's free
+            Build my resume — it&pos;s free
           </Link>
         </div>
       </section>
